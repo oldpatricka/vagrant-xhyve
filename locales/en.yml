@@ -1,0 +1,83 @@
+en:
+  vagrant_xhyve:
+    already_status: |-
+      The machine is already %{status}.
+    launching_instance: |-
+      Launching an instance with the following settings...
+    not_created: |-
+      Instance is not created. Please run `vagrant up` first.
+    ready: |-
+      Machine is booted and ready for use!
+    rsync_not_found_warning: |-
+      Warning! Folder sync disabled because the rsync binary is missing in the %{side}.
+      Make sure rsync is installed and the binary can be found in the PATH.
+    rsync_folder: |-
+      Rsyncing folder: %{hostpath} => %{guestpath}
+    source_dest_checks_no_vpc: |-
+      Warning! Ignoring source_dest_checks flag as it can only be configured on
+      a VPC instance.
+    starting: |-
+      Starting the instance...
+    stopping: |-
+      Stopping the instance...
+    terminating: |-
+      Terminating the instance...
+    waiting_for_ready: |-
+      Waiting for instance to become "ready"...
+    waiting_for_ssh: |-
+      Waiting for SSH to become available...
+    warn_ssh_access: |-
+      Warning! Vagrant might not be able to SSH into the instance.
+      Please check your security groups settings.
+    will_not_destroy: |-
+      The instance '%{name}' will not be destroyed, since the confirmation
+      was declined.
+
+    errors:
+      rsync_error: |-
+        There was an error when attempting to rsync a shared folder.
+        Please inspect the error message below for more info.
+
+        Host path: %{hostpath}
+        Guest path: %{guestpath}
+        Error: %{stderr}
+      mkdir_error: |-
+        There was an error when attempting to create a shared host folder.
+        Please inspect the error message below for more info.
+
+        Host path: %{hostpath}
+        Error: %{err}
+
+    states:
+      short_not_created: |-
+        not created
+      long_not_created: |-
+        The xhyve VM is not created. Run `vagrant up` to create it.
+
+      short_stopped: |-
+        stopped
+      long_stopped: |-
+        The xhyve VM is stopped. Run `vagrant up` to start it.
+
+      short_stopping: |-
+        stopping
+      long_stopping: |-
+        The xhyve VM is stopping. Wait until is completely stopped to
+        run `vagrant up` and start it.
+
+      short_pending: |-
+        pending
+      long_pending: |-
+        The xhyve VM is pending a start (i.e. this is a transition state).
+
+      short_running: |-
+        running
+      long_running: |-
+        The xhyve VM is running. To stop this machine, you can run
+        `vagrant halt`. To destroy the machine, you can run `vagrant destroy`.
+
+      short_pending: |-
+        pending
+      long_pending: |-
+        The xhyve VM is still being initialized. To destroy this machine,
+        you can run `vagrant destroy`.
