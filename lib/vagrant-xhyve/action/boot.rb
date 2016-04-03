@@ -37,20 +37,29 @@ module VagrantPlugins
             machine_json = File.read(machine_info_path)
             machine_options = JSON.parse(machine_json, :symbolize_names => true)
             machine_uuid = machine_options[:uuid]
-            env[:ui].info("Found existing UUID: #{machine_uuid}")
+            @logger.debug("Found existing UUID: #{machine_uuid}")
           else
             machine_uuid = SecureRandom.uuid
+            @logger.debug("Created new UUID: #{machine_uuid}")
           end
 
           image_dir = File.join(env[:machine].data_dir, "image")
           vmlinuz_file = File.join(image_dir, "vmlinuz")
           initrd_file = File.join(image_dir, "initrd.gz")
-          hdd_file = File.join(image_dir, "hdd.img")
           block_devices = []
 
-          if File.exist?(hdd_file) then
+          0.upto(10).each do |blockidx|
+            block_file = File.join(image_dir, "block#{blockidx}.img")
+            if (File.exist? block_file) then
+              @logger.debug("Found block device #{block_file}")
+              block_devices.push(block_file)
+            else
+              break
+            end
+          end
+
+          if block_devices.any? then
               disk_kernel_parameters = "acpi=off root=/dev/vda1 ro"
-              block_devices.push(hdd_file)
           else
               disk_kernel_parameters = ""
           end
@@ -59,9 +68,9 @@ module VagrantPlugins
 
           firmware = "kexec,#{vmlinuz_file},#{initrd_file},#{kernel_parameters}"
 
-          env[:ui].info("Machine data_dir: #{env[:machine].data_dir}")
-          env[:ui].info("Kernel Options: #{kernel_parameters}")
-          env[:ui].info("Block Devices: #{block_devices}")
+          @logger.debug("Machine data_dir: #{env[:machine].data_dir}")
+          @logger.debug("Kernel Options: #{kernel_parameters}")
+          @logger.debug("Block Devices: #{block_devices}")
 
           xhyve_guest = Util::XhyveGuest.new(
               kernel: vmlinuz_file,
@@ -103,7 +112,7 @@ module VagrantPlugins
           machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
           File.write(machine_info_path, xhyve_guest.options().to_json)
           
-          env[:ui].info(" Launched xhyve VM with PID #{xhyve_pid}, MAC: #{xhyve_guest.mac}, and IP #{xhyve_guest.ip}")
+          @logger.info(" Launched xhyve VM with PID #{xhyve_pid}, MAC: #{xhyve_guest.mac}, and IP #{xhyve_guest.ip}")
 
           # Terminate the instance if we were interrupted
           terminate(env) if env[:interrupted]

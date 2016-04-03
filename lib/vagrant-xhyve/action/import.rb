@@ -31,16 +31,10 @@ module VagrantPlugins
           0.upto(10).each do |blockidx|
             block_file = File.join(box_dir, "block#{blockidx}.img")
             if (File.exist? block_file) then
-              box_files.pust(block_file)
+              box_files.push(block_file)
             else
               break
             end
-          end
-
-          # TODO: delete before release
-          hdd_file = File.join(box_dir, "hdd.img")
-          if (File.exist? hdd_file) then
-            box_files.push(hdd_file)
           end
 
           FileUtils.mkdir_p(image_dir)
