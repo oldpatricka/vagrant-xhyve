@@ -12,25 +12,30 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:machine_state_id] = read_state(env[:aws_compute], env[:machine])
+          env[:machine_state_id] = read_state(env[:machine])
 
           @app.call(env)
         end
 
-        def read_state(aws, machine)
+        def read_state(machine)
           return :not_created if machine.id.nil?
 
-          # Find the machine
-          server = aws.servers.get(machine.id)
-          if server.nil? || [:"shutting-down", :terminated].include?(server.state.to_sym)
-            # The machine can't be found
-            @logger.info("Machine not found or terminated, assuming it got destroyed.")
-            machine.id = nil
-            return :not_created
-          end
+          xhyve_pid = Integer(machine.id)
 
-          # Return the state
-          return server.state.to_sym
+          if process_alive(xhyve_pid) then
+              return :running
+          else
+              return :stopped
+          end
+        end
+
+        def process_alive(pid)
+          begin
+            Process.getpgid(pid)
+            true
+          rescue Errno::ESRCH
+            false
+          end
         end
       end
     end

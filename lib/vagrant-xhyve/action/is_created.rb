@@ -10,6 +10,7 @@ module VagrantPlugins
 
         def call(env)
           env[:result] = env[:machine].id != nil
+          puts "is created: #{env[:result]}"
           @app.call(env)
         end
       end

@@ -28,13 +28,15 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            if env[:result]
+              b2.use Call, GracefulHalt, :stopped, :running do |env2, b3|
+                if !env2[:result]
+                  b3.use StopInstance
+                end
+              end
+            else
               b2.use MessageNotCreated
-              next
             end
-
-            #b2.use ConnectAWS
-            b2.use StopInstance
           end
         end
       end
@@ -50,13 +52,11 @@ module VagrantPlugins
                   b3.use MessageNotCreated
                   next
                 end
-                #b3.use ConnectAWS
-                #b3.use ElbDeregisterInstance
                 b3.use TerminateInstance
                 #b3.use ProvisionerCleanup if defined?(ProvisionerCleanup)
               end
             else
-              #b2.use MessageWillNotDestroy
+              b2.use MessageWillNotDestroy
             end
           end
         end
@@ -83,7 +83,6 @@ module VagrantPlugins
       def self.action_read_ssh_info
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          #b.use ConnectAWS
           b.use ReadSSHInfo
         end
       end
@@ -93,9 +92,8 @@ module VagrantPlugins
       # key.
       def self.action_read_state
         Vagrant::Action::Builder.new.tap do |b|
-          #b.use ConfigValidate
-          #b.use ConnectAWS
-          #b.use ReadState
+          b.use ConfigValidate
+          b.use ReadState
         end
       end
 
@@ -130,10 +128,10 @@ module VagrantPlugins
 
       def self.action_prepare_boot
         Vagrant::Action::Builder.new.tap do |b|
+          b.use Import
           b.use Provision
           b.use SyncedFolders
-          b.use WarnNetworks
-          b.use ElbRegisterInstance
+          #b.use WarnNetworks
         end
       end
 
@@ -143,24 +141,19 @@ module VagrantPlugins
           b.use HandleBox
           b.use ConfigValidate
           b.use BoxCheckOutdated
-          #b.use ConnectAWS
           b.use Call, IsCreated do |env1, b1|
-            if env1[:result]
-              b1.use MessageAlreadyCreated # TODO write a better message
-            else
-              #b1.use action_prepare_boot
-              b1.use RunInstance # launch a new instance
+            if not env1[:result]
+              b1.use action_prepare_boot
             end
+
+            b1.use Boot # launch a new instance
           end
-          puts "in action about to call RunInstance"
-          #b.use RunInstance # launch a new instance
         end
       end
 
       def self.action_reload
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          #b.use ConnectAWS
           b.use Call, IsCreated do |env, b2|
             if !env[:result]
               b2.use MessageNotCreated
@@ -181,7 +174,6 @@ module VagrantPlugins
 
       # The autoload farm
       action_root = Pathname.new(File.expand_path("../action", __FILE__))
-      ##autoload :ConnectAWS, action_root.join("connect_aws")
       autoload :IsCreated, action_root.join("is_created")
       autoload :IsStopped, action_root.join("is_stopped")
       autoload :MessageAlreadyCreated, action_root.join("message_already_created")
@@ -190,7 +182,8 @@ module VagrantPlugins
       autoload :PackageInstance, action_root.join("package_instance")
       autoload :ReadSSHInfo, action_root.join("read_ssh_info")
       autoload :ReadState, action_root.join("read_state")
-      autoload :RunInstance, action_root.join("run_instance")
+      autoload :Import, action_root.join("import")
+      autoload :Boot, action_root.join("boot")
       autoload :StartInstance, action_root.join("start_instance")
       autoload :StopInstance, action_root.join("stop_instance")
       autoload :TerminateInstance, action_root.join("terminate_instance")

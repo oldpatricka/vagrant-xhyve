@@ -1,5 +1,6 @@
 require "log4r"
 require "json"
+require "fileutils"
 
 module VagrantPlugins
   module XHYVE
@@ -26,6 +27,8 @@ module VagrantPlugins
           # Destroy the server and remove the tracking ID
           env[:ui].info(I18n.t("vagrant_xhyve.terminating"))
           env[:machine].id = nil
+
+          FileUtils.rm_rf(env[:machine].data_dir)
 
           @app.call(env)
         end

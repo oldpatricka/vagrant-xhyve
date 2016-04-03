@@ -1,4 +1,5 @@
 require "log4r"
+require 'vagrant-xhyve/util/vagrant-xhyve'
 
 module VagrantPlugins
   module XHYVE
@@ -8,7 +9,7 @@ module VagrantPlugins
       class ReadSSHInfo
         def initialize(app, env)
           @app    = app
-          @logger = Log4r::Logger.new("vagrant_aws::action::read_ssh_info")
+          @logger = Log4r::Logger.new("vagrant_xhyve::action::read_ssh_info")
         end
 
         def call(env)
@@ -20,9 +21,11 @@ module VagrantPlugins
         def read_ssh_info(env)
           return nil if env[:machine].id.nil?
 
-          env[:ui].info("machine ip: #{env[:machine_ip]}")
+          machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
+          machine_json = File.read(machine_info_path)
+          machine_options = JSON.parse(machine_json, :symbolize_names => true)
 
-          return { :host => env[:machine_ip], :port => 22 }
+          return { :host => machine_options[:ip], :port => 22 }
         end
       end
     end

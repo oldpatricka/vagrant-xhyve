@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.license       = "MIT"
   s.authors       = "Patrick Armstrong"
   s.email         = "pat@oldpatricka.com"
-  s.homepage      = "http://www.oldpatricka.com"
+  s.homepage      = "http://github.com/oldpatricka/vagrant-xhyve"
   s.summary       = "Enables Vagrant to manage machines in xhyve."
   s.description   = "Enables Vagrant to manage machines in xhyve."
 
