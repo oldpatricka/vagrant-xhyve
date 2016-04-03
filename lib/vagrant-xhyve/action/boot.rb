@@ -59,7 +59,7 @@ module VagrantPlugins
           end
 
           if block_devices.any? then
-              disk_kernel_parameters = "acpi=off root=/dev/vda1 ro"
+              disk_kernel_parameters = "root=/dev/vda1 ro"
           else
               disk_kernel_parameters = ""
           end
@@ -93,7 +93,7 @@ module VagrantPlugins
 
           # wait for ip
           network_ready_retries = 0
-          network_ready_retries_max = 10
+          network_ready_retries_max = 5
           while true
             break if env[:interrupted]
 
@@ -104,7 +104,7 @@ module VagrantPlugins
                 network_ready_retries += 1
                 env[:ui].info("Waiting for IP to be ready...")
             else
-                raise 'Waited too long for IP to be ready.'
+                raise 'Waited too long for IP to be ready. Your VM probably did not boot.'
             end
             sleep 2
           end
