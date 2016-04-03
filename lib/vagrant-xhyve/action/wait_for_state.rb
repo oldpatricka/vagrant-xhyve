@@ -2,7 +2,7 @@ require "log4r"
 require "timeout"
 
 module VagrantPlugins
-  module AWS
+  module XHYVE
     module Action
       # This action will wait for a machine to reach a specific state or quit by timeout
       class WaitForState
@@ -11,7 +11,7 @@ module VagrantPlugins
         # @param [Number] timeout Timeout in seconds.
         def initialize(app, env, state, timeout)
           @app     = app
-          @logger  = Log4r::Logger.new("vagrant_aws::action::wait_for_state")
+          @logger  = Log4r::Logger.new("vagrant_xhyve::action::wait_for_state")
           @state   = state
           @timeout = timeout
         end
@@ -19,7 +19,7 @@ module VagrantPlugins
         def call(env)
           env[:result] = true
           if env[:machine].state.id == @state
-            @logger.info(I18n.t("vagrant_aws.already_status", :status => @state))
+            @logger.info(I18n.t("vagrant_xhyve.already_status", :status => @state))
           else
             @logger.info("Waiting for machine to reach state #{@state}")
             begin

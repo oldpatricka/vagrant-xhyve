@@ -11,9 +11,13 @@ module VagrantPlugins
       # @return [Fixnum]
       attr_accessor :cpus
 
-      # The number of MBs memory to give the VM
+      # The amount of memory to give the VM
       #
-      # @return [Fixnum]
+      # This can just be a simple integer for memory in MB
+      # or you can use the suffixed style, eg. 2G for two
+      # Gigabytes
+      #
+      # @return [String]
       attr_accessor :memory
       
       # The mac address of the VM
@@ -46,7 +50,8 @@ module VagrantPlugins
 
       def finalize!
 
-        @cpus = nil if @cpus == UNSET_VALUE
+        @cpus = 1 if @cpus == UNSET_VALUE
+        @memory = 1024 if @cpus == UNSET_VALUE
  
         # Mark that we finalized
         @__finalized = true

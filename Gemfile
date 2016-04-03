@@ -1,8 +1,8 @@
 source "https://rubygems.org"
 
-gem 'xhyve-ruby'
-
-gemspec
+group :plugins do
+  gemspec
+end
 
 group :development do
   # We depend on Vagrant for development, but we don't add it as a
@@ -11,6 +11,3 @@ group :development do
   gem "vagrant", :git => "https://github.com/mitchellh/vagrant.git"
 end
 
-group :plugins do
-  gem "vagrant-xhyve" , path: "."
-end

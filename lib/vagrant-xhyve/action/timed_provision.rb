@@ -1,7 +1,7 @@
-require "vagrant-aws/util/timer"
+require "vagrant-xhyve/util/timer"
 
 module VagrantPlugins
-  module AWS
+  module XHYVE
     module Action
       # This is the same as the builtin provision except it times the
       # provisioner runs.

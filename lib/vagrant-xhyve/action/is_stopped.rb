@@ -1,5 +1,5 @@
 module VagrantPlugins
-  module AWS
+  module XHYVE
     module Action
       # This can be used with "Call" built-in to check if the machine
       # is stopped and branch in the middleware.

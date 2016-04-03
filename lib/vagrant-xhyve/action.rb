@@ -131,7 +131,6 @@ module VagrantPlugins
           b.use Import
           b.use Provision
           b.use SyncedFolders
-          #b.use WarnNetworks
         end
       end
 
@@ -189,9 +188,6 @@ module VagrantPlugins
       autoload :TerminateInstance, action_root.join("terminate_instance")
       autoload :TimedProvision, action_root.join("timed_provision") # some plugins now expect this action to exist
       autoload :WaitForState, action_root.join("wait_for_state")
-      autoload :WarnNetworks, action_root.join("warn_networks")
-      autoload :ElbRegisterInstance, action_root.join("elb_register_instance")
-      autoload :ElbDeregisterInstance, action_root.join("elb_deregister_instance")
     end
   end
 end

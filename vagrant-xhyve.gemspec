@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.description   = "Enables Vagrant to manage machines in xhyve."
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.rubyforge_project         = "vagrant-aws"
+  s.rubyforge_project         = "vagrant-xhyve"
 
-  s.add_runtime_dependency "fog", "~> 1.22"
+  s.add_runtime_dependency "xhyve-ruby", ">= 0.0.6"
   s.add_runtime_dependency "iniparse", "~> 1.4", ">= 1.4.2"
 
   s.add_development_dependency "rake"

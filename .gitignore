@@ -14,7 +14,8 @@ Gemfile.lock
 # Vagrant
 .vagrant
 Vagrantfile
-!example_box/Vagrantfile
+example_box
+example.box
 
 # RVM files for gemset/ruby setting
 .ruby-*
