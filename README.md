@@ -22,7 +22,7 @@ installing, `vagrant up` and specify the `xhyve` provider. An example is
 shown below.
 
 ```
-$ vagrant plugin install vagrant-xhyve
+$ vagrant plugin install vagrant-xhyve --plugin-version 0.1.0.pre
 ...
 $ sudo vagrant up --provider=xhyve
 ...
@@ -52,7 +52,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :xhyve do |xhyve|
     xhyve.cpus = 1
-    xhyve.memory = 1G
+    xhyve.memory = "1G"
   end
 end
 ```
