@@ -51,7 +51,7 @@ module VagrantPlugins
       def finalize!
 
         @cpus = 1 if @cpus == UNSET_VALUE
-        @memory = 1024 if @cpus == UNSET_VALUE
+        @memory = 1024 if @memory == UNSET_VALUE
  
         # Mark that we finalized
         @__finalized = true

@@ -86,7 +86,7 @@ module VagrantPlugins
 
 
           xhyve_pid = xhyve_guest.start
-          env[:ui].info(xhyve_guest.options().to_json)
+          @logger.debug(xhyve_guest.options().to_json)
         
           # Immediately save the ID since it is created at this point.
           env[:machine].id = xhyve_pid

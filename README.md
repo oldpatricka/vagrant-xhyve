@@ -1,6 +1,6 @@
 # Vagrant xhyve Provider
 
-This is a [Vagrant](http://www.vagrantup.com) plugin that adds an [xhyve](http://aws.amazon.com)
+This is a [Vagrant](http://www.vagrantup.com) plugin that adds an [xhyve](http://xhyve.org)
 provider to Vagrant.
 
 ## Features
@@ -28,38 +28,27 @@ $ sudo vagrant up --provider=xhyve
 ...
 ```
 
-Of course prior to doing this, you'll need to obtain an XHYVE-compatible
+Of course prior to doing this, you'll need to obtain an xhyve-compatible
 box file for Vagrant.
 
 ## Quick Start
 
-After installing the plugin (instructions above), the quickest way to get
-started is to actually use a dummy AWS box and specify all the details
-manually within a `config.vm.provider` block. So first, add the dummy
-box using any name you want:
+After installing the plugin (instructions above), you can try an xhyve ubuntu
+linux example. This is similar to the example from the xhyve intro blog post.
 
 ```
-$ vagrant box add oldpatricka/tinycorelinux
+$ mkdir xhyve-vagrant
+$ cd xhyve-vagrant
+$ vagrant init oldpatricka/ubuntu-14.04
+$ sudo vagrant up --provider xhyve
 ...
 ```
 
-And then make a Vagrantfile that looks like the following, filling in
-your information where necessary.
+This will start an Ubuntu Linux instance. you can log in with:
 
 ```
-Vagrant.configure("2") do |config|
-  config.vm.box = "oldpatricka/tinycorelinux"
-
-  config.vm.provider :xhyve do |xhyve|
-    xhyve.cpus = 1
-    xhyve.memory = 1G
-  end
-end
+$ sudo vagrant ssh
 ```
-
-And then run `sudo vagrant up --provider=xhyve`.
-
-This will start a Tiny Core Linux instance.
 
 ## Box Format
 
