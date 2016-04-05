@@ -73,7 +73,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :xhyve do |xhyve|
     xhyve.cpus = 2
-    xhyve.memory = 1G
+    xhyve.memory = "1G"
   end
 end
 ```
@@ -100,6 +100,14 @@ Q. Will I even not have to use sudo?
 A. There's a theory in that issue linked above that wrapping xhyve in an
 app store app would help. If that were the case, you could probably use the
 embedded binary with vagrant-xhyve.
+
+## Acknowledgements
+
+This plugin was heavilly cribbed from the vagrant-aws and vagrant-virtualbox
+providers. So thanks for those.
+
+This also uses the nice [xhyve-ruby](https://github.com/dalehamel/xhyve-ruby)
+gem, by Dale Hamel.
 
 ## Development
 
