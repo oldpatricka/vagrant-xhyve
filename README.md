@@ -1,5 +1,7 @@
 # Vagrant xhyve Provider
 
+[![Gem Version](https://badge.fury.io/rb/vagrant-xhyve.svg)](https://badge.fury.io/rb/vagrant-xhyve)
+
 This is a [Vagrant](http://www.vagrantup.com) plugin that adds an [xhyve](http://xhyve.org)
 provider to Vagrant.
 

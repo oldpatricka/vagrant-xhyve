@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 group :plugins do
   gemspec
+  gem "xhyve-ruby", :path => "vendor/xhyve-ruby"
 end
 
 group :development do

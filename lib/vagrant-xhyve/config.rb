@@ -19,7 +19,14 @@ module VagrantPlugins
       #
       # @return [String]
       attr_accessor :memory
-      
+ 
+
+      # The path to the xhyve binary if you don't want to
+      # use the one bundled with xhyve-ruby
+      #
+      # @return [String]
+      attr_accessor :xhyve_binary
+
       # The mac address of the VM
       #
       # @return [String]
@@ -31,10 +38,11 @@ module VagrantPlugins
       attr_accessor :uuid
 
       def initialize(region_specific=false)
-        @cpus   = UNSET_VALUE
-        @memory = UNSET_VALUE
-        @mac    = UNSET_VALUE
-        @uuid   = UNSET_VALUE
+        @cpus         = UNSET_VALUE
+        @memory       = UNSET_VALUE
+        @xhyve_binary = UNSET_VALUE
+        @mac          = UNSET_VALUE
+        @uuid         = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -52,6 +60,7 @@ module VagrantPlugins
 
         @cpus = 1 if @cpus == UNSET_VALUE
         @memory = 1024 if @memory == UNSET_VALUE
+        @xhyve_binary = nil if @xhyve_binary == UNSET_VALUE
  
         # Mark that we finalized
         @__finalized = true

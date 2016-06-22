@@ -3,9 +3,12 @@ require 'xhyve'
 module VagrantPlugins
   module XHYVE
     module Util
+      
+      # TODO: send all this upstream
       class XhyveGuest < Xhyve::Guest
 
         def initialize(**opts)
+          @xhyve_binary = opts[:xhyve_binary] || Xhyve::BINARY_PATH
           if opts.has_key? "pid"
             @pid = pid
           else
@@ -23,6 +26,7 @@ module VagrantPlugins
             @command = build_command
             @mac = find_mac
           end
+
         end
 
         def options
@@ -41,8 +45,25 @@ module VagrantPlugins
             :foreground => @foreground,
             :command => @command,
             :mac => @mac,
-            :ip => ip
+            :ip => ip,
+            :xhyve_binary => @xhyve_binary
           }
+        end
+
+        def build_command
+          [
+            "#{@xhyve_binary}",
+            "#{'-A' if @acpi}",
+            '-U', @uuid,
+            '-m', @memory,
+            '-c', @processors,
+            '-s', '0:0,hostbridge',
+            "#{"-s #{PCI_BASE - 1}:0,virtio-net" if @networking }" ,
+            "#{"#{@blockdevs.each_with_index.map { |p, i| "-s #{PCI_BASE + i},virtio-blk,#{p}" }.join(' ')}" unless @blockdevs.empty? }",
+            '-s', '31,lpc',
+            '-l', "#{@serial},stdio",
+            '-f' "kexec,#{@kernel},#{@initrd},'#{@cmdline}'"
+          ].join(' ')
         end
       end
     end

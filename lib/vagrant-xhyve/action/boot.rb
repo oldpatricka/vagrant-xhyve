@@ -27,10 +27,12 @@ module VagrantPlugins
           
           memory = env[:machine].provider_config.memory
           cpus = env[:machine].provider_config.cpus
+          xhyve_binary = env[:machine].provider_config.xhyve_binary
 
           # Launch!
           env[:ui].info(" -- CPUs: #{cpus}") if cpus
           env[:ui].info(" -- Memory: #{memory}")
+          env[:ui].info(" -- xhyve binary: #{xhyve_binary.to_s}") if xhyve_binary
 
           machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
           if File.exist?(machine_info_path) then
@@ -81,9 +83,9 @@ module VagrantPlugins
               memory: memory,
               processors: cpus,
               networking: true,
+              xhyve_binary: xhyve_binary,
               acpi: true
           )
-
 
           xhyve_pid = xhyve_guest.start
           @logger.debug(xhyve_guest.options().to_json)
