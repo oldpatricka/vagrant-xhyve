@@ -1,0 +1,35 @@
+{
+	name=box
+	ip_address=192.168.64.34
+	hw_address=1,9a:65:1b:12:cf:32
+	identifier=1,9a:65:1b:12:cf:32
+	lease=0x56551009
+}
+{
+	name=localhost
+	ip_address=192.168.64.5
+	hw_address=1,a6:84:b2:34:cf:32
+	identifier=1,a6:84:b2:34:cf:32
+	lease=0x5653f52c
+}
+{
+	name=localhost
+	ip_address=192.168.64.4
+	hw_address=1,ea:28:a:33:cf:32
+	identifier=1,ea:28:a:33:cf:32
+	lease=0x5653f4eb
+}
+{
+	name=localhost
+	ip_address=192.168.64.3
+	hw_address=1,e2:ff:e:70:cf:32
+	identifier=1,e2:ff:e:70:cf:32
+	lease=0x5653f496
+}
+{
+	name=localhost
+	ip_address=192.168.64.2
+	hw_address=1,5a:90:52:13:cf:32
+	identifier=1,5a:90:52:13:cf:32
+	lease=0x5653f3c5
+}

@@ -1,0 +1,8 @@
+tmp
+mkmf.log
+Makefile
+coverage
+lib/xhyve/vmnet/vmnet.bundle
+*.gem
+*.swo
+*.swp
