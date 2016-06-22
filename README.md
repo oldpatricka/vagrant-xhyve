@@ -66,6 +66,9 @@ This provider exposes quite a few provider-specific configuration options:
   integer for memory in MB or you can use the suffixed style, eg. 2G for two
   Gigabytes
 * `cpus` - The number of CPUs to give the VM
+* `xhyve_binary` - use a custom xhyve version (for example, the version of xhyve
+  included with [Docker for Mac Beta](https://docs.docker.com/engine/installation/mac/#docker-for-mac)
+  is interesting. The path is `/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit`. )
 
 These can be set like typical provider-specific configuration:
 
@@ -76,6 +79,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :xhyve do |xhyve|
     xhyve.cpus = 2
     xhyve.memory = "1G"
+    xhyve.xhyve_binary = "/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit"
   end
 end
 ```
