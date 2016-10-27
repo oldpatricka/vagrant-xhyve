@@ -11,33 +11,37 @@ module VagrantPlugins
         end
 
         def call(env)
-          if env[:machine].state.id == :stopped
-            env[:ui].info(I18n.t("vagrant_xhyve.already_status", :status => env[:machine].state.id))
+          if is_process_alive? pid(env)
+            env[:ui].info(I18n.t("vagrant_xhyve.stopping"))
+            kill_xhyve_process(env)
           else
-              env[:ui].info(I18n.t("vagrant_xhyve.stopping"))
-
-              xhyve_pid = env[:machine].id
-
-              if xhyve_pid == nil then
-                @logger.debug("xhyve already gone")
-              elsif process_alive(Integer(xhyve_pid)) then
-                env[:ui].info(" Terminating xhyve instance with PID #{xhyve_pid}")
-                Process.kill(3, Integer(xhyve_pid))
-              else
-                @logger.debug("xhyve PID already gone #{xhyve_pid}")
-              end
+            env[:ui].info(I18n.t("vagrant_xhyve.already_status", status: env[:machine].state.id))
           end
-
+          destroy_xhyve_status_file(env)
           @app.call(env)
         end
 
-        def process_alive(pid)
+        def is_process_alive?(pid)
+          return false if pid == 0
           begin
             Process.getpgid(pid)
             true
           rescue Errno::ESRCH
             false
           end
+        end
+
+        def kill_xhyve_process(env)
+          Process.kill(3, pid(env))
+        end
+
+        def destroy_xhyve_status_file(env)
+          xhyve_status_file_path = File.join(env[:machine].data_dir, "xhyve.json")
+          FileUtils.remove_file(xhyve_status_file_path, force: true)
+        end
+
+        def pid(env)
+          @pid ||= env[:xhyve_status][:pid].to_i
         end
       end
     end
