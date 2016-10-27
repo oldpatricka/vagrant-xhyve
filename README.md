@@ -69,6 +69,7 @@ This provider exposes quite a few provider-specific configuration options:
 * `xhyve_binary` - use a custom xhyve version (for example, the version of xhyve
   included with [Docker for Mac Beta](https://docs.docker.com/engine/installation/mac/#docker-for-mac)
   is interesting. The path is `/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit`. )
+* kernel_command - send a custom kernel boot command
 
 These can be set like typical provider-specific configuration:
 
@@ -80,6 +81,7 @@ Vagrant.configure("2") do |config|
     xhyve.cpus = 2
     xhyve.memory = "1G"
     xhyve.xhyve_binary = "/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit"
+    xhyve.kernel_command = "root=/dev/mapper/centos-root ro crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap acpi=off console=ttyS0 LANG=en_GB.UTF-8" # example for a CentOS installed in a LVM filesystem
   end
 end
 ```
@@ -133,7 +135,7 @@ $ bundle exec rake
 If those pass, you're ready to start developing the plugin. You can test
 the plugin without installing it into your Vagrant environment by just
 creating a `Vagrantfile` in the top level of this directory (it is gitignored)
-and add the following line to your `Vagrantfile` 
+and add the following line to your `Vagrantfile`
 ```ruby
 Vagrant.require_plugin "vagrant-xhyve"
 ```
