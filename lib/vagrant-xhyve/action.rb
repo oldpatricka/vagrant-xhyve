@@ -84,6 +84,7 @@ module VagrantPlugins
       def self.action_read_ssh_info
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ReadState
           b.use ReadSSHInfo
         end
       end

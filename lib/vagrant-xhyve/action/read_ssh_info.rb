@@ -14,18 +14,12 @@ module VagrantPlugins
 
         def call(env)
           env[:machine_ssh_info] = read_ssh_info(env)
-
           @app.call(env)
         end
 
         def read_ssh_info(env)
-          return nil if env[:machine].id.nil?
-
-          machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
-          machine_json = File.read(machine_info_path)
-          machine_options = JSON.parse(machine_json, :symbolize_names => true)
-
-          return { :host => machine_options[:ip], :port => 22 }
+          xhyve_status = env[:xhyve_status]
+          return { :host => xhyve_status[:ip], :port => 22 }
         end
       end
     end
