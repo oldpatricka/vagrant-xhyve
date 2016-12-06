@@ -1,3 +1,7 @@
+# 0.3.0 (December 5th, 2016)
+
+* Added `kernel_command` option to set custom kernel parameters (Nuno Passaro)
+
 # 0.2.0 (July 23, 2016)
 
 * Added ability to set custom binary (to work with docker beta etc)
