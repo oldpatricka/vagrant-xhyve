@@ -19,7 +19,7 @@ module VagrantPlugins
       #
       # @return [String]
       attr_accessor :memory
- 
+
 
       # The path to the xhyve binary if you don't want to
       # use the one bundled with xhyve-ruby
@@ -31,18 +31,26 @@ module VagrantPlugins
       #
       # @return [String]
       attr_accessor :mac
-      
+
       # The uuid of the VM
       #
       # @return [String]
       attr_accessor :uuid
 
+      # The kernel command to initialize the machine
+      # The default command assumes that the instalation is done directly on the
+      # disk and not using a lvm. For example, by default, Centos intallation uses
+      # LVM. Moreover, it might be interesting to add new kernel options.
+      # @return [String]
+      attr_accessor :kernel_command
+
       def initialize(region_specific=false)
-        @cpus         = UNSET_VALUE
-        @memory       = UNSET_VALUE
-        @xhyve_binary = UNSET_VALUE
-        @mac          = UNSET_VALUE
-        @uuid         = UNSET_VALUE
+        @cpus           = UNSET_VALUE
+        @memory         = UNSET_VALUE
+        @xhyve_binary   = UNSET_VALUE
+        @mac            = UNSET_VALUE
+        @uuid           = UNSET_VALUE
+        @kernel_command = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -61,7 +69,7 @@ module VagrantPlugins
         @cpus = 1 if @cpus == UNSET_VALUE
         @memory = 1024 if @memory == UNSET_VALUE
         @xhyve_binary = nil if @xhyve_binary == UNSET_VALUE
- 
+        @kernel_command = %Q{"earlyprintk=serial console=ttyS0 root=/dev/vda1 ro"} if @kernel_command == UNSET_VALUE
         # Mark that we finalized
         @__finalized = true
       end

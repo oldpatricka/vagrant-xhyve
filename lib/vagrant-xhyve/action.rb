@@ -27,6 +27,7 @@ module VagrantPlugins
       def self.action_halt
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ReadState
           b.use Call, IsCreated do |env, b2|
             if env[:result]
               b2.use Call, GracefulHalt, :stopped, :running do |env2, b3|
@@ -83,6 +84,7 @@ module VagrantPlugins
       def self.action_read_ssh_info
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ReadState
           b.use ReadSSHInfo
         end
       end

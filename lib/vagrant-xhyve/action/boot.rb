@@ -15,107 +15,41 @@ module VagrantPlugins
         include Vagrant::Util::Retryable
 
         def initialize(app, env)
-          @app    = app
-          @logger = Log4r::Logger.new("vagrant_xhyve::action::run_instance")
+          @app = app
         end
 
         def call(env)
+          env[:ui].info(" About to launch vm...")
           # Initialize metrics if they haven't been
           env[:metrics] ||= {}
 
-          env[:ui].info(" About to launch vm")
-          
-          memory = env[:machine].provider_config.memory
-          cpus = env[:machine].provider_config.cpus
-          xhyve_binary = env[:machine].provider_config.xhyve_binary
-
-          # Launch!
-          env[:ui].info(" -- CPUs: #{cpus}") if cpus
-          env[:ui].info(" -- Memory: #{memory}")
-          env[:ui].info(" -- xhyve binary: #{xhyve_binary.to_s}") if xhyve_binary
-
           machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
-          if File.exist?(machine_info_path) then
+          if File.exist?(machine_info_path)
             machine_json = File.read(machine_info_path)
             machine_options = JSON.parse(machine_json, :symbolize_names => true)
+            log.debug "Machine Options: #{JSON.pretty_generate(machine_options)}"
             machine_uuid = machine_options[:uuid]
-            @logger.debug("Found existing UUID: #{machine_uuid}")
+            pid = machine_options[:pid]
+            mac = machine_options[:mac]
           else
             machine_uuid = SecureRandom.uuid
-            @logger.debug("Created new UUID: #{machine_uuid}")
           end
 
-          image_dir = File.join(env[:machine].data_dir, "image")
-          vmlinuz_file = File.join(image_dir, "vmlinuz")
-          initrd_file = File.join(image_dir, "initrd.gz")
-          block_devices = []
+          guest_config = {
+            pid: pid,
+            mac: mac,
+            uuid: machine_uuid,
+            cmdline: kernel_command(env),
+            memory: memory(env),
+            processors: cpus(env),
+            binary: xhyve_binary(env),
+          }
 
-          0.upto(10).each do |blockidx|
-            block_file = File.join(image_dir, "block#{blockidx}.img")
-            if (File.exist? block_file) then
-              @logger.debug("Found block device #{block_file}")
-              block_devices.push(block_file)
-            else
-              break
-            end
-          end
-
-          if block_devices.any? then
-              disk_kernel_parameters = "root=/dev/vda1 ro"
-          else
-              disk_kernel_parameters = ""
-          end
-
-          kernel_parameters = "\"earlyprintk=serial console=ttyS0 #{disk_kernel_parameters}\""
-
-          firmware = "kexec,#{vmlinuz_file},#{initrd_file},#{kernel_parameters}"
-
-          @logger.debug("Machine data_dir: #{env[:machine].data_dir}")
-          @logger.debug("Kernel Options: #{kernel_parameters}")
-          @logger.debug("Block Devices: #{block_devices}")
-
-          xhyve_guest = Util::XhyveGuest.new(
-              kernel: vmlinuz_file,
-              initrd: initrd_file,
-              cmdline: kernel_parameters,
-              blockdevs: block_devices,
-              serial: 'com1',
-              memory: memory,
-              processors: cpus,
-              networking: true,
-              xhyve_binary: xhyve_binary,
-              acpi: true
-          )
-
-          xhyve_pid = xhyve_guest.start
-          @logger.debug(xhyve_guest.options().to_json)
-        
+          xhyve_guest = start_guest(env, guest_config)
           # Immediately save the ID since it is created at this point.
-          env[:machine].id = xhyve_pid
+          env[:machine].id = xhyve_guest.uuid
 
-          # wait for ip
-          network_ready_retries = 0
-          network_ready_retries_max = 5
-          while true
-            break if env[:interrupted]
-
-            if xhyve_guest.ip
-                break
-            end
-            if network_ready_retries < network_ready_retries_max then
-                network_ready_retries += 1
-                env[:ui].info("Waiting for IP to be ready...")
-            else
-                raise 'Waited too long for IP to be ready. Your VM probably did not boot.'
-            end
-            sleep 2
-          end
-
-          machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
-          File.write(machine_info_path, xhyve_guest.options().to_json)
-          
-          @logger.info(" Launched xhyve VM with PID #{xhyve_pid}, MAC: #{xhyve_guest.mac}, and IP #{xhyve_guest.ip}")
-
+          save_guest_status(env, xhyve_guest)
           # Terminate the instance if we were interrupted
           terminate(env) if env[:interrupted]
 
@@ -137,6 +71,94 @@ module VagrantPlugins
           destroy_env[:config_validate] = false
           destroy_env[:force_confirm_destroy] = true
           env[:action_runner].run(Action.action_destroy, destroy_env)
+        end
+
+        private
+
+        def block_device_paths(base_path)
+          0.upto(10).map do |blockidx|
+            block_file = File.join(base_path, "block#{blockidx}.img")
+            return block_file if File.exist? block_file
+          end
+        end
+
+        def kernel_file_path(base_path)
+          File.join(base_path, "vmlinuz")
+        end
+
+        def initrd_file_path(base_path)
+          File.join(base_path, "initrd.gz")
+        end
+
+        def memory(env)
+          provider_config(env).memory
+        end
+
+        def cpus(env)
+          provider_config(env).cpus
+        end
+
+        def xhyve_binary(env)
+          provider_config(env).xhyve_binary
+        end
+
+        def kernel_command(env)
+          provider_config(env).kernel_command
+        end
+
+        def provider_config(env)
+          @provider_config ||= env[:machine].provider_config
+        end
+
+        def start_guest(env, config = {})
+          image_dir = File.join(env[:machine].data_dir, "image")
+          default_config = {
+            kernel: kernel_file_path(image_dir),
+            initrd: initrd_file_path(image_dir),
+            blockdevs: block_device_paths(image_dir),
+            serial: 'com1',
+            networking: true,
+            acpi: true
+          }
+          config = default_config.merge(config)
+          log.debug "xhyve configuration: #{JSON.pretty_generate(config)}"
+          xhyve_guest = Util::XhyveGuest.new config
+          xhyve_guest.start
+          xhyve_guest
+        end
+
+        def save_guest_status(env, guest)
+          wait_for_guest_ip(env, guest)
+          machine_info_path = File.join(env[:machine].data_dir, "xhyve.json")
+          log.debug "xhyve configuration: #{JSON.pretty_generate(guest.options)}"
+          File.write(machine_info_path, guest.options().to_json)
+          log.info(" Launched xhyve VM with PID #{guest.pid}, MAC: #{guest.mac}, and IP #{guest.ip}")
+        end
+
+        def wait_for_guest_ip(env, guest)
+          network_ready_retries = 0
+          network_ready_retries_max = 3
+          update_xhyve_status(env, guest.options)
+          while guest.ip.nil?
+            break if env[:interrupted]
+
+            if network_ready_retries < network_ready_retries_max then
+              network_ready_retries += 1
+              env[:ui].info("Waiting for IP to be ready. Try #{network_ready_retries}/#{network_ready_retries_max}...")
+            else
+              raise 'Waited too long for IP to be ready. Your VM probably did not boot.'
+            end
+            sleep 0.5
+          end
+          update_xhyve_status(env, guest.options)
+        end
+
+        def update_xhyve_status(env, status)
+          env[:xhyve_status] = status
+        end
+
+        def log
+          @logger ||= Log4r::Logger.new("vagrant_xhyve::action::boot")
         end
       end
     end
