@@ -66,9 +66,7 @@ This provider exposes quite a few provider-specific configuration options:
   integer for memory in MB or you can use the suffixed style, eg. 2G for two
   Gigabytes
 * `cpus` - The number of CPUs to give the VM
-* `xhyve_binary` - use a custom xhyve version (for example, the version of xhyve
-  included with [Docker for Mac Beta](https://docs.docker.com/engine/installation/mac/#docker-for-mac)
-  is interesting. The path is `/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit`. )
+* `xhyve_binary` - use a custom xhyve version
 * kernel_command - send a custom kernel boot command
 
 These can be set like typical provider-specific configuration:
@@ -92,6 +90,12 @@ There is minimal support for synced folders. Upon `vagrant up`,
 `rsync` (if available) to uni-directionally sync the folder to
 the remote machine over SSH.
 
+## Using Docker's HyperKit Fork of Xhyve
+
+Docker has a very nice port of Xhyve called [HyperKit](https://github.com/docker/hyperkit). It has some interesting features like better stability and qcow support (which this provider can't use yet).
+
+If you want to try it out, either install hyperkit directly, or you can use the version bundled with [Docker for Mac](https://docs.docker.com/engine/installation/mac/). The path to the binary is `/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit`. See the configuration section above for how to use this with the `xhyve_binary` option.
+
 ## Questions
 
 Q. Should I use this for my work?
@@ -103,11 +107,11 @@ Q. Why?
 
 A. This project is powered by ignorance and good intentions.
 
-Q. Will I even not have to use sudo?
+Q. Will I ever not have to use sudo?
 
 A. There's a theory in that issue linked above that wrapping xhyve in an
 app store app would help. If that were the case, you could probably use the
-embedded binary with vagrant-xhyve.
+embedded binary with vagrant-xhyve. Another option is to use setuid root.
 
 ## Acknowledgements
 
@@ -143,3 +147,8 @@ Use bundler to execute Vagrant:
 ```
 $ bundle exec vagrant up --provider=xhyve
 ```
+
+## Contributors
+
+Patrick Armstrong
+Nuno Passaro
