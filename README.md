@@ -150,5 +150,5 @@ $ bundle exec vagrant up --provider=xhyve
 
 ## Contributors
 
-Patrick Armstrong
-Nuno Passaro
+* Patrick Armstrong
+* Nuno Passaro
