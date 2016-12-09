@@ -152,3 +152,4 @@ $ bundle exec vagrant up --provider=xhyve
 
 * Patrick Armstrong
 * Nuno Passaro
+* Guy Pascarella
