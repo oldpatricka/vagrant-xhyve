@@ -1,3 +1,7 @@
+# 0.4.1 (December 10th, 2016)
+
+* Put the embedded version of xhyve-ruby first in the LOAD_PATH (Guy Pascarella)
+
 # 0.4.0 (December 10th, 2016)
 
 * Added qcow support to use with hyperkit
