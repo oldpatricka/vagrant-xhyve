@@ -1,3 +1,8 @@
+# 0.4.0 (December 10th, 2016)
+
+* Added qcow support to use with hyperkit
+* Fixed intermittent failures with certain MAC addresses
+
 # 0.3.0 (December 5th, 2016)
 
 * Added `kernel_command` option to set custom kernel parameters (Nuno Passaro)

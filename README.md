@@ -107,11 +107,15 @@ Q. Why?
 
 A. This project is powered by ignorance and good intentions.
 
-Q. Will I ever not have to use sudo?
+Q. Will I ever not have to use sudo or setuid root?
 
 A. There's a theory in that issue linked above that wrapping xhyve in an
 app store app would help. If that were the case, you could probably use the
 embedded binary with vagrant-xhyve. Another option is to use setuid root.
+
+Q. This sucks.
+
+A. That's not a question, but why don't you try out [another implementation](https://github.com/sirn/vagrant-xhyve). Looks pretty nice.
 
 ## Acknowledgements
 
