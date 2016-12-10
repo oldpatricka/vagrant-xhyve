@@ -1,4 +1,11 @@
 {
+	name=boxt
+	ip_address=192.168.64.35
+	hw_address=1,9a:65:1b:12:cf:f
+	identifier=1,9a:65:1b:12:cf:f
+	lease=0x56551008
+}
+{
 	name=box
 	ip_address=192.168.64.34
 	hw_address=1,9a:65:1b:12:cf:32

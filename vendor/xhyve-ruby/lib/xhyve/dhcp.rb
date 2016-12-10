@@ -7,9 +7,11 @@ module Xhyve
     MAX_ATTEMPTS = 60
 
     def get_ip_for_mac(mac)
+      normalized_mac = normalize_mac(mac)
+
       max = ENV.key?('MAX_IP_WAIT') ? ENV['MAX_IP_WAIT'].to_i : nil
       ip = wait_for(max: max) do
-        ip = parse_lease_file_for_mac(mac)
+        ip = parse_lease_file_for_mac(normalized_mac)
       end
     end
 
@@ -36,6 +38,17 @@ module Xhyve
         return result if result
         sleep(WAIT_TIME)
       end
+    end
+
+    # macos dhcp represents mac addresses differently from xhyve. Specifically, 
+    # it doesn't display leading zeros. This function normalized the mac
+    # address to the macos format
+    def normalize_mac(mac)
+        # don't try to normalize if it doesn't seem like a mac...
+        return mac if mac !~ /.*:.*:.*:.*:.*:.*/
+        mac_parts = mac.to_s.split(":")
+        normalized_parts = mac_parts.map {|s| Integer(s, 16).to_s(16) }
+        normalized_parts.join(":")
     end
   end
 end

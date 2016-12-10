@@ -3,6 +3,7 @@ require File.expand_path('../../spec_helper.rb', __FILE__)
 RSpec.describe Xhyve::DHCP do
   let(:leases) do
     {
+      '9a:65:1b:12:cf:0f' => '192.168.64.35',
       '9a:65:1b:12:cf:32' => '192.168.64.34',
       'a6:84:b2:34:cf:32' => '192.168.64.5',
       'ea:28:a:33:cf:32' => '192.168.64.4',
