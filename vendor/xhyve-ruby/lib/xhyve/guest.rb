@@ -33,8 +33,8 @@ module Xhyve
     end
 
     def start
-      outfile, infile = redirection
-      @pid = spawn(@command, [:out, :err] => outfile, in: infile)
+      outfile, errfile, infile = redirection
+      @pid = spawn(@command, out: outfile, err: errfile, in: infile)
       if @foreground
         Process.wait(@pid) 
         outfile.cooked!
@@ -59,9 +59,9 @@ module Xhyve
 
     def redirection
       if @foreground
-        [$stdout.raw!, $stdin.raw! ]
+        [$stdout.raw!, $stderr.raw!, $stdin.raw! ]
       else
-        [NULLDEV, NULLDEV]
+        [NULLDEV, NULLDEV, NULLDEV]
       end
     end
 

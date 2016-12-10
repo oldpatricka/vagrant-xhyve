@@ -76,10 +76,8 @@ module VagrantPlugins
         private
 
         def block_device_paths(base_path)
-          0.upto(10).map do |blockidx|
-            block_file = File.join(base_path, "block#{blockidx}.img")
-            return block_file if File.exist? block_file
-          end
+          block_paths = Dir.glob File.join(base_path, "block*.{raw,img,qcow,qcow2}")
+          block_paths.sort
         end
 
         def kernel_file_path(base_path)

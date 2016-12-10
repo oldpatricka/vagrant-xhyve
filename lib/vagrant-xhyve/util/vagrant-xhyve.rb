@@ -48,11 +48,23 @@ module VagrantPlugins
             '-c', @processors,
             '-s', '0:0,hostbridge',
             "#{"-s #{PCI_BASE - 1}:0,virtio-net" if @networking }" ,
-            "#{"#{@blockdevs.each_with_index.map { |p, i| "-s #{PCI_BASE + i},virtio-blk,#{p}" }.join(' ')}" unless @blockdevs.empty? }",
+            "#{build_block_device_parameter}",
             '-s', '31,lpc',
             '-l', "#{@serial},stdio",
             '-f', "kexec,#{@kernel},#{@initrd},'#{@cmdline}'"
           ].join(' ')
+        end
+
+        def build_block_device_parameter
+          block_device_parameter = ""
+          @blockdevs.each_with_index.map do |p, i|
+            if p.include? "qcow"
+              block_device_parameter << "-s #{PCI_BASE + i},virtio-blk,file://#{p},format\=qcow "
+            else
+              block_device_parameter << "-s #{PCI_BASE + i},virtio-blk,#{p} "
+            end
+          end
+          block_device_parameter
         end
       end
     end

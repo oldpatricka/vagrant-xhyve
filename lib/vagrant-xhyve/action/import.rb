@@ -41,10 +41,9 @@ module VagrantPlugins
         end
 
         def copy_block_files_to(from, to)
-          0.upto(10).each do |blockidx|
-            filename = "block#{blockidx}.img"
-            copy_file(from, to, filename) if File.exist? File.join(from, filename)
-          end
+          block_glob = Dir.glob(File.join(from, "block*.{img,raw,qcow,qcow2}"))
+          log.debug("Copying #{block_glob} to #{to} ")
+          FileUtils.cp_r block_glob, to
         end
 
         def copy_file(from, to, filename)
