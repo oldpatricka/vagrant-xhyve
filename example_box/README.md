@@ -29,3 +29,6 @@ described in Michael Steil's nice blog post
 
 You can have up to ten block devices to attach to your vm, named from block0.img
 upto block9.img. You can also have zero. That's ok.
+
+If you would like to use a qcow image, simply name the image block0.qcow to
+block9.qcow. Note this will only work with the hyperkit fork of xhyve.

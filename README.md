@@ -7,15 +7,15 @@ provider to Vagrant.
 
 ## Features
 
-* Sorta works
+* Basic features work
+* Can work with Hyperkit fork of Xhyve
+* qcow image support
 
 ## Limitations
 
 You need to use sudo for most vagrant actions with the xhyve driver,
 due to the entitlements needed for xhyve to run without sudo. More details
 in the [xhyve github issue](https://github.com/mist64/xhyve/issues/60).
-
-Also, sometimes launching a VM just fails. But I'm not quite sure why.
 
 ## Usage
 
