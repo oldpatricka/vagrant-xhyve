@@ -54,7 +54,7 @@ module VagrantPlugins
       def initialize(region_specific=false)
         @cpus           = UNSET_VALUE
         @memory         = UNSET_VALUE
-        @vmtype         = UNSER_VALUE
+        @vmtype         = UNSET_VALUE
         @xhyve_binary   = UNSET_VALUE
         @mac            = UNSET_VALUE
         @uuid           = UNSET_VALUE
