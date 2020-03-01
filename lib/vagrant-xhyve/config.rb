@@ -20,6 +20,13 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :memory
 
+      # The type of VM that is going to run
+      #
+      # The two posible types are: kexec or fbsd
+      # kexec -> linux
+      # fbsd -> FreeBSD
+      attr_accessor :vmtype
+
 
       # The path to the xhyve binary if you don't want to
       # use the one bundled with xhyve-ruby
@@ -47,6 +54,7 @@ module VagrantPlugins
       def initialize(region_specific=false)
         @cpus           = UNSET_VALUE
         @memory         = UNSET_VALUE
+        @vmtype         = UNSET_VALUE
         @xhyve_binary   = UNSET_VALUE
         @mac            = UNSET_VALUE
         @uuid           = UNSET_VALUE
@@ -68,6 +76,7 @@ module VagrantPlugins
 
         @cpus = 1 if @cpus == UNSET_VALUE
         @memory = 1024 if @memory == UNSET_VALUE
+        @vmtype = "kexec" if @vmtype == UNSET_VALUE
         @xhyve_binary = nil if @xhyve_binary == UNSET_VALUE
         @kernel_command = %Q{"earlyprintk=serial console=ttyS0 root=/dev/vda1 ro"} if @kernel_command == UNSET_VALUE
         # Mark that we finalized

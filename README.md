@@ -68,6 +68,7 @@ This provider exposes quite a few provider-specific configuration options:
 * `cpus` - The number of CPUs to give the VM
 * `xhyve_binary` - use a custom xhyve version
 * kernel_command - send a custom kernel boot command
+* `vmtype` - The type of VM (kexec or fbsd) 
 
 These can be set like typical provider-specific configuration:
 
@@ -78,6 +79,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :xhyve do |xhyve|
     xhyve.cpus = 2
     xhyve.memory = "1G"
+    xhyve.vmtype = "kexec"
     xhyve.xhyve_binary = "/Applications/Docker.app/Contents/MacOS/com.docker.hyperkit"
     xhyve.kernel_command = "root=/dev/mapper/centos-root ro crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap acpi=off console=ttyS0 LANG=en_GB.UTF-8" # example for a CentOS installed in a LVM filesystem
   end
