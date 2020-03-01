@@ -36,6 +36,7 @@ module VagrantPlugins
             :mac => @mac,
             :ip => ip,
             :binary => @binary
+            :vmtype => @vmtype
           }
         end
 
@@ -51,7 +52,7 @@ module VagrantPlugins
             "#{build_block_device_parameter}",
             '-s', '31,lpc',
             '-l', "#{@serial},stdio",
-            '-f', "kexec,#{@kernel},#{@initrd},'#{@cmdline}'"
+            '-f', "#{@vmtype},#{@kernel},#{@initrd},'#{@cmdline}'"
           ].join(' ')
         end
 

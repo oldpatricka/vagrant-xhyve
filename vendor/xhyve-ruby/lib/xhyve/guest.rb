@@ -30,6 +30,7 @@ module Xhyve
       @binary = opts[:binary] || BINARY_PATH
       @command = build_command
       @mac = find_mac
+      @vmtype = opts[:vmtype] || 'kexec'
     end
 
     def start
@@ -81,7 +82,7 @@ module Xhyve
         "#{"#{@blockdevs.each_with_index.map { |p, i| "-s #{PCI_BASE + i},virtio-blk,#{p}" }.join(' ')}" unless @blockdevs.empty? }",
         '-s', '31,lpc',
         '-l', "#{@serial},stdio",
-        '-f' "kexec,#{@kernel},#{@initrd},'#{@cmdline}'"
+        '-f' "#{@vmtype},#{@kernel},#{@initrd},'#{@cmdline}'"
       ].join(' ')
     end
   end
